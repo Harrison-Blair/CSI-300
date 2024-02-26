@@ -27,7 +27,6 @@ from custcard as cc join creditdebit as cd on cc.card_number = cd.card_number
 		join paymentmethod as pm on cpm.method_id = pm.method_id
 where card_name = "American Express";
 
-
 -- What kinds of customers have gift cards connected to their account?
 select cpm.cid, pm.method_desc
 from customerpaymentmethod as cpm join giftcard as gc on cpm.cid = gc.cid
