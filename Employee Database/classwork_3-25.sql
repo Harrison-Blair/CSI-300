@@ -7,4 +7,5 @@ from Employee join EmpHistory on Employee.eid = EmpHistory.eid
 		inner join (
 			select Employee.eid, max(start_date)
             from EmpHistory
-            group by Employee.eid)
+            group by Employee.eid) on EmpHistory
+
