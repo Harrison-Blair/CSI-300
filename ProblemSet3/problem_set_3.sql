@@ -8,7 +8,9 @@ table and returns these columns:
 Sort the result set by category_name and then by product_name in
 ascending sequence.
 */
-
+select category_name, product_name, list_price
+from categories as c join products as p on c.category_id = p.category_id
+order by category_name, product_name ASC;
 /*
 2. Write a SELECT statement that joins the Customers, Orders, Order_Items,
 and Products tables. This statement should return these columns:
@@ -22,7 +24,11 @@ and Products tables. This statement should return these columns:
 Use aliases of your choice for the tables. Sort the final result set by
 last_name, order_date, and product_name.
 */
-
+select last_name, first_name, order_date, product_name, item_price, discount_amount, quantity
+from customers as c join orders as o on c.customer_id = o.customer_id
+	join order_items as oi on o.order_id = oi.order_id
+		join products as p on oi.product_id = p.product_id
+order by last_name, order_date, product_name asc;
 /*
 3. Write a SELECT statement that returns the product_name and list_price
 columns from the Products table. Return one row for each product that has
@@ -30,7 +36,10 @@ the same list price as another product. (Hint: Use a self-join to check that
 the product_id columns aren’t equal but the list_price columns are equal).
 Sort the result set by product_name.
 */
-
+select A.product_name, B.product_name, A.list_price
+from products A, products B
+where A.list_price = B.list_price and not A.product_id = B.product_id
+order by A.product_name asc;
 /*
 4. Write a SELECT statement that returns these two columns:
 	a. category_name (The category_name column from the Categories
@@ -40,13 +49,16 @@ Return one row for each category that has never been used. Hint: Use
 an outer join and only return rows where the product_id column
 contains a null value.
 */
-
+select c.category_name, p.product_id
+from categories as c left outer join products as p on c.category_id = p.category_id
+where p.product_id IS NULL;
 /*
 5. Write a SELECT statement that returns these columns:
 	a. The count of the number of orders in the Orders table
 	b. The sum of the tax_amount columns in the Orders table
 */
-
+select COUNT(order_id), SUM(tax_amount)
+from orders;
 /*
 6. Write a SELECT statement that returns one row for each customer that has
 orders with these columns:
@@ -57,7 +69,11 @@ amount from the price. Then, multiply by the quantity.)
 Return only those rows where the customer has more than 1 order. Sort
 the result set in descending sequence by the sum of the line item amounts.
 */
-
+select email_address, COUNT(o.order_id) as numOrders, SUM(oi.item_price - oi.discount_amount) as totalCost
+from customers as c join orders as o on c.customer_id = o.customer_id
+	join order_items as oi on o.order_id = oi.order_id
+group by email_address
+having COUNT(o.order_id) > 1;
 /*
 7. Write a SELECT statement that answers this question: Which customers
 have ordered more than one product? Return these columns:
