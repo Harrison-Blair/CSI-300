@@ -7,7 +7,8 @@ time_of_error datetime not null,
 new_eid int not null,
 new_efn varchar(45) not null,
 new_eln varchar(45) not null,
-new_email varchar(255) not null
+email varchar(255) not null
+	default ""
 );
 
 drop table if exists DupAddEntry;
@@ -55,7 +56,7 @@ for each row begin
         new.ezip = ezip;
         
 	if count_dups > 0 then
-		insert into DupAddEntry values ("Address", NOW(), new.eaid, new.estreet,
+		insert into DupAddEntry values("Address", NOW(), new.eaid, new.estreet,
 			new.ecity, new.est, new.ezip);
 	end if;
 end;
@@ -70,7 +71,9 @@ for each row begin
     from EmpContact;
     
     if count_dups > 0 then
-		insert into DupEmpEntry values(new.contact);
+		update DupEmpEntry
+        set email = new.contact
+        where new_eid = new.eid;
 	end if;
 end;
 //
