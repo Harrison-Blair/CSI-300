@@ -16,7 +16,7 @@ delete from DupEmpEntry
 where new_eid = del_eid;
 
 delete from dupaddentry
-where new_eaid = del_eaid;
+where new_eaid = del_eid;
 
 end;
 //
