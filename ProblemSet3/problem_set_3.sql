@@ -1,6 +1,6 @@
 use my_guitar_shop;
 
-
+-- SET GLOBAL sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''));
 /*
 Write a SELECT statement that joins the Categories table to the Products
 table and returns these columns:
@@ -121,7 +121,18 @@ a. the customer’s email address
 b. the largest order for that customer.
 To do this, you can group the result set by the email_address.
 */
+select email_address, o.order_id, SUM((item_price - discount_amount) * quantity + tax_amount + ship_amount) as orderTotal
+from customers c join orders o on c.customer_id = o.customer_id
+	join order_items oi on o.order_id = oi.order_id
+		join products p on oi.product_id = p.product_id
+group by email_address, o.order_id;
 
+select email_address, MAX(orderTotal) as maxTotal
+from (select email_address, SUM((item_price - discount_amount) * quantity + tax_amount + ship_amount) as orderTotal
+from customers c join orders o on c.customer_id = o.customer_id
+	join order_items oi on o.order_id = oi.order_id
+		join products p on oi.product_id = p.product_id
+group by email_address, o.order_id) ot1 group by email_address;
 
 /*
 Use the UNION operator to generate a result set consisting of three
@@ -133,3 +144,7 @@ d. A calculated column that contains a value of SHIPPED or NOT
 SHIPPED.
 Sort the final result set by order_date.
 */
+select order_id, order_date, 
+	IF(ship_date > order_date, "SHIPPED", "NOT SHIPPED") as shippedStatus
+from orders
+order by order_date;
